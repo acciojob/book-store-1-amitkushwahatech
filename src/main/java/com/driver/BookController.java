@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.websocket.server.PathParam;
+
 @RestController
 @RequestMapping("books")
 public class BookController {
@@ -53,22 +55,66 @@ public class BookController {
     // get request /get-book-by-id/{id}
     // pass id as path variable
     // getBookById()
+    @GetMapping("/get-book-by-id/{id}")
+    public ResponseEntity getBookById(@PathVariable("id") Integer id){
+        for(Book b : bookList){
+            if(b.getId()==id){
+                return new ResponseEntity<>(b,HttpStatus.FOUND);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 
     // delete request /delete-book-by-id/{id}
     // pass id as path variable
     // deleteBookById()
+    @DeleteMapping("/delete-book-by-id/{id}")
+    public ResponseEntity deleteBookById(@PathVariable("id") Integer id){
+        for(Book b:bookList){
+            if(b.getId()==id){
+                bookList.remove(b);
+            }
+        }
+        return new ResponseEntity<>("Delete Successful",HttpStatus.OK);
+
+    }
 
     // get request /get-all-books
     // getAllBooks()
+    @GetMapping("/get-all-books")
+    public ResponseEntity getAllBooks(){
+        return new ResponseEntity<>(bookList,HttpStatus.FOUND);
+    }
 
     // delete request /delete-all-books
     // deleteAllBooks()
+    @DeleteMapping("/delete-all-books")
+    public ResponseEntity deleteAllBooks(){
+        bookList.clear();
+        return new ResponseEntity<>("Deleted Successfully",HttpStatus.OK);
+    }
 
     // get request /get-books-by-author
     // pass author name as request param
     // getBooksByAuthor()
+    @GetMapping("/get-books-by-author")
+    public ResponseEntity  getBooksByAuthor(@RequestParam("author") String author){
+        for(Book b: bookList) {
+            if (b.getAuthor().equals(author))
+                return new ResponseEntity<>(b, HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 
     // get request /get-books-by-genre
     // pass genre name as request param
     // getBooksByGenre()
+    @GetMapping("/get-books-by-genre")
+    public ResponseEntity getBooksByGenre(@RequestParam("genre") String genre){
+        for(Book b: bookList) {
+            if (b.getGenre().equals(genre))
+                return new ResponseEntity<>(b, HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }
